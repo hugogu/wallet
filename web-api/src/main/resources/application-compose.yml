@@ -1,0 +1,5 @@
+spring:
+  flyway:
+    url: jdbc:postgresql://postgres:5432/wallet
+  r2dbc:
+    url: r2dbc:postgresql://postgres:5432/wallet
