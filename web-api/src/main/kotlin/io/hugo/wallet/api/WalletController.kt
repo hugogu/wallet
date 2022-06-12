@@ -3,6 +3,7 @@ package io.hugo.wallet.api
 import io.hugo.wallet.api.model.*
 import io.hugo.wallet.dal.AccountRepo
 import io.hugo.wallet.dal.TransactionRepo
+import io.hugo.wallet.model.AccountEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import java.util.UUID
 
 @Validated
@@ -33,7 +35,7 @@ class WalletController(
     @GetMapping("/account/{id}")
     fun queryAccountDetail(@PathVariable id: UUID): Mono<AccountDetail> {
         return accountRepo.findById(id).map {
-            AccountDetail.from(it)
+            AccountDetail(it.id, it.accountNumber, it.accountType, it.createTime)
         }
     }
 
@@ -49,11 +51,19 @@ class WalletController(
                 it.id = requestId ?: UUID.randomUUID()
             }
 
-            Flux.concat(
+            Flux.merge(
                 accountRepo.save(pair.t1).map { ResourceIdentity(it.id) },
                 accountRepo.save(pair.t2).map { ResourceIdentity(it.id) },
                 transactionRepo.save(transaction).map { ResourceIdentity(it.id, ResourceType.TRANSACTION) }
             )
-        }.filter { it.resourceType == ResourceType.TRANSACTION }.single()
+        }.filter { it.resourceType == ResourceType.TRANSACTION }.toMono()
+    }
+
+    companion object {
+        fun AccountCreationRequest.toEntity(id: UUID) = AccountEntity().also {
+            it.id = id
+            it.accountType = type
+            it.accountNumber = accountNumber
+        }
     }
 }

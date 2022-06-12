@@ -17,14 +17,14 @@ export default function() {
         },
     };
     let request = {
-        "from": "ab1d4eac-40ad-44e8-875a-91a02af9e861",
-        "to": "e45ef48c-d767-4278-bfd3-e6532d30c627",
+        "from": "4682ef8c-5480-408a-b979-60378df6eb43",
+        "to": "5e803bd2-3287-41b3-bf6b-6a87505b98c5",
         "monetary": {
             "amount": 20, "currency": "CNY"
         }
     }
 
-    let res = http.post('http://localhost:8080/transfer', JSON.stringify(request), params);
+    let res = http.post('http://localhost:8082/transfer', JSON.stringify(request), params);
     check(res, {
         'status was 200': r => r.status === 200,
         'not found': r => r.status === 404,

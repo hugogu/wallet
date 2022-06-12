@@ -2,14 +2,16 @@ package io.hugo.wallet
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
+import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @SpringBootApplication
-@EnableR2dbcAuditing
+@EnableJpaAuditing
 @EnableJpaRepositories
-class WalletApplication
+@EnableTransactionManagement
+class WalletSyncApplication
 
 fun main(args: Array<String>) {
-    runApplication<WalletApplication>(*args)
+    runApplication<WalletSyncApplication>(*args)
 }

@@ -23,4 +23,4 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['wallet-api:8080']
+      - targets: ['wallet-api:8080', 'wallet-sync-api:8080']

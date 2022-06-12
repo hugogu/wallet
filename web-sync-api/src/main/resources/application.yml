@@ -1,14 +1,6 @@
 spring:
-  flyway:
-    url: jdbc:postgresql://localhost:5432/wallet
-    user: postgres
-    password: postgres
   datasource:
     url: jdbc:postgresql://localhost:5432/wallet
-    username: postgres
-    password: postgres
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/wallet
     username: postgres
     password: postgres
 
