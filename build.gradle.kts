@@ -40,6 +40,9 @@ subprojects {
         implementation(kotlin("reflect"))
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+        implementation("org.javamoney:moneta:1.4.2")
+        implementation("org.zalando:jackson-datatype-money:1.3.0")
+        implementation("nl.hiddewieringa:money-kotlin:1.0.1")
     }
 
     tasks.withType<KotlinCompile> {
@@ -54,7 +57,7 @@ subprojects {
     }
 
     tasks.named<BootBuildImage>("bootBuildImage") {
-        imageName = "${project.group}/apps/${project.name}"
+        imageName = "app-${project.name}"
         // Refers to https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/
         // Refers to https://paketo.io/docs/howto/java
         environment = mapOf(

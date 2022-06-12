@@ -7,3 +7,13 @@ spring:
     url: r2dbc:postgresql://localhost:5432/wallet
     username: postgres
     password: postgres
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    root: info

@@ -40,14 +40,14 @@ class WalletController(
     @PostMapping("/transfer")
     fun transfer(
         @RequestBody request: TransferRequest,
-        @RequestHeader("X-Request-ID") requestId: UUID,
+        @RequestHeader("X-Request-ID", required = false) requestId: UUID? = null,
     ): Mono<ResourceIdentity> {
         val from = accountRepo.findById(request.from)
         val to = accountRepo.findById(request.to)
         return from.zipWith(to).flatMapMany { pair ->
-            pair.t1.balance -= request.amount
-            pair.t2.balance += request.amount
-            val transaction = request.toEntity(requestId)
+            val transaction = pair.t1.transferTo(pair.t2, request.monetary).also {
+                it.id = requestId ?: UUID.randomUUID()
+            }
 
             Flux.concat(
                 accountRepo.save(pair.t1).map { ResourceIdentity(it.id) },

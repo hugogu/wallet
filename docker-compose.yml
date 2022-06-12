@@ -1,7 +1,7 @@
 version: '3'
 services:
   wallet-api:
-    image: "io.hugo/apps/web-api"
+    image: app-web-api:latest
     ports:
       - "8080:8080"
     environment:
@@ -16,3 +16,27 @@ services:
     environment:
       - POSTGRES_DB=wallet
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./tmp/pgdata:/var/lib/postgresql/data
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./benchmark/prometheus:/etc/prometheus/
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./benchmark/grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+  influxdb:
+    image: influxdb:1.7.4
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
