@@ -1,12 +1,3 @@
-CREATE TABLE IF NOT EXISTS command
-(
-    id            uuid PRIMARY KEY,
-    command_type  varchar(16) NOT NULL,
-    command_data  jsonb       NOT NULL,
-    business_time timestamp   NOT NULL DEFAULT now(),
-    create_time   timestamp   NOT NULL DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS account
 (
     id           uuid PRIMARY KEY,

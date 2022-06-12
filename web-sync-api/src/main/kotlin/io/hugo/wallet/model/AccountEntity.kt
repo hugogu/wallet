@@ -1,5 +1,6 @@
 package io.hugo.wallet.model
 
+import io.hugo.common.model.EntityBase
 import org.hibernate.annotations.Type
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version

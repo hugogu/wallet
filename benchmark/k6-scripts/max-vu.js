@@ -13,23 +13,25 @@ export let options = {
 export default function() {
     let params = {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Request-ID': uuidv4().toString()
         },
     };
     let request = {
-        "from": "4682ef8c-5480-408a-b979-60378df6eb43",
-        "to": "5e803bd2-3287-41b3-bf6b-6a87505b98c5",
+        "from": "94e37be9-ce18-4fde-b8e1-6c6819b6035d",
+        "to": "ac87fec9-b203-49a5-aab5-7749bef0ed5f",
         "monetary": {
-            "amount": 20, "currency": "CNY"
+            "amount": 20,
+            "currency": "CNY"
         }
     }
 
-    let res = http.post('http://localhost:8082/transfer', JSON.stringify(request), params);
+    let res = http.post('http://localhost:8080/transfer', JSON.stringify(request), params);
     check(res, {
         'status was 200': r => r.status === 200,
         'not found': r => r.status === 404,
         'invalid': r => r.status === 400,
-        'request error': r => r.status > 400,
+        'client error': r => r.status > 400 && r.status < 500,
         'server error': r => r.status >=500
     });
     sleep(0.05)

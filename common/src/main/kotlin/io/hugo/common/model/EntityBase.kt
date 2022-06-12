@@ -1,4 +1,4 @@
-package io.hugo.wallet.model
+package io.hugo.common.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType

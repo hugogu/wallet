@@ -1,21 +1,17 @@
 package io.hugo.wallet.model
 
+import io.hugo.common.model.R2EntityBase
 import io.r2dbc.postgresql.codec.Json
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.UUID
 import javax.money.MonetaryAmount
 
 @Table("account")
-class AccountEntity {
-    @Id
-    var id: UUID = UUID(0, 0)
+class AccountEntity : R2EntityBase() {
 
     var accountType: AccountType = AccountType.WALLET
 
@@ -25,9 +21,6 @@ class AccountEntity {
     var balance: BigDecimal = BigDecimal.ZERO
 
     var extraInfo: Json? = null
-
-    @CreatedDate
-    var createTime: Instant = Instant.EPOCH
 
     @LastModifiedDate
     @Column("last_update")
@@ -45,10 +38,11 @@ class AccountEntity {
         return TransactionEntity().also {
             it.amount = transferAmount
             it.currency = amount.currency.currencyCode
-            it.fromAccount = id
-            it.toAccount = another.id
+            it.fromAccount = id!!
+            it.toAccount = another.id!!
             it.transactionTime = Instant.now()
             it.settleTime  = Instant.now()
+            it.new = true
         }
     }
 }

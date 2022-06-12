@@ -32,6 +32,7 @@ subprojects {
     the<DependencyManagementExtension>().apply {
         imports {
             mavenBom(SpringBootPlugin.BOM_COORDINATES)
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.3")
             mavenBom("org.springframework.data:spring-data-bom:2021.2.0")
         }
     }
@@ -47,7 +48,7 @@ subprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
+            freeCompilerArgs = listOf("-Xjsr305=strict", "-Xjvm-default=compatibility")
             jvmTarget = "11"
         }
     }
