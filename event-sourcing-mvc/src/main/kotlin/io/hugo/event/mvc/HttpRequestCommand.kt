@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.RequestEntity
+import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import java.net.InetAddress
 import java.net.URI
@@ -31,12 +32,12 @@ data class HttpRequestCommand(
     /**
      * The headers have to be immutable to yield a stable id.
      */
-    val headers: Map<String, String> = emptyMap(),
+    val headers: MultiValueMap<String, String> = HttpHeaders(),
 ) : ExecutableCommand {
     val type = TYPE
 
     override val id: UUID by lazy {
-        headers[REQUEST_ID.lowercase()]?.let {
+        headers[REQUEST_ID.lowercase()]?.firstOrNull()?.let {
             UUID.nameUUIDFromBytes((it + url).toByteArray())
         } ?: run {
             logger.warn("No request id found in HTTP request, fail back to generation.")
@@ -48,9 +49,9 @@ data class HttpRequestCommand(
         val uri = URI.create(url)
         val httpMethod = HttpMethod.valueOf(method)
         val httpHeaders = HttpHeaders().apply {
-            headers.forEach(::add)
+            addAll(headers)
         }
-        httpHeaders.add(FORWARDED_FOR, httpHeaders.getFirst(HttpHeaders.HOST.lowercase()))
+        httpHeaders.add(FORWARDED_FOR, httpHeaders.getFirst(HttpHeaders.HOST))
         httpHeaders[HttpHeaders.HOST] = InetAddress.getLocalHost().hostName
         if (options.renewRequestIds) {
             httpHeaders[REQUEST_ID] = listOf(UUID.nameUUIDFromBytes(options.randomSeed.toByteArray()).toString())
@@ -71,7 +72,7 @@ data class HttpRequestCommand(
                 sourceType = request.javaClass,
                 url = request.requestURL.toString(),
                 method = request.method,
-                headers = requestHeaders.map { it.key.lowercase() to it.value.first() }.toMap(),
+                headers = requestHeaders,
             )
         }
 

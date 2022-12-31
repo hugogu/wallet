@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Configuration
 class EventSourcingMVCAutoConfiguration {
     @Bean
     fun objectMapperInitialization(mapper: ObjectMapper) = SmartInitializingSingleton {
-        mapper.registerModule(EventSourcingJacksonModule())
+        setupObjectMapper(mapper)
         if (mapper !== SpringObjectMapperSupplier.INSTANCE) {
             logger.warn("Two object mapper was detected. This may lead to inconsistent serialization.")
-            SpringObjectMapperSupplier.INSTANCE.registerModule(EventSourcingJacksonModule())
+            setupObjectMapper(SpringObjectMapperSupplier.INSTANCE)
         }
     }
 
@@ -28,6 +28,11 @@ class EventSourcingMVCAutoConfiguration {
     class EventSourcingSyncAutoConfiguration {
         @Bean
         fun mvcRequestCapture() = RequestSourcingFilter()
+    }
+
+    private fun setupObjectMapper(mapper: ObjectMapper) {
+        mapper.registerModule(EventSourcingJacksonModule())
+        mapper.registerModule(HttpHeaderJacksonModule())
     }
 
     private val logger = LoggerFactory.getLogger(EventSourcingMVCAutoConfiguration::class.java)
