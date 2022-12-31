@@ -1,5 +1,6 @@
 package io.hugo.event.mvc
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import io.hugo.common.mvc.HttpServletRequestUtils.readHeaders
 import io.hugo.event.model.CommandOptions
@@ -27,6 +28,7 @@ data class HttpRequestCommand(
     val sourceType: Class<*> = Any::class.java,
     val method: String = "",
     val url: String = "",
+    val query: String,
     val body: String? = null,
 
     /**
@@ -45,8 +47,12 @@ data class HttpRequestCommand(
         }
     }
 
+    @get:JsonIgnore
+    internal val fullUri: URI by lazy {
+        URI.create("$url?$query")
+    }
+
     override fun execute(options: CommandOptions): Any {
-        val uri = URI.create(url)
         val httpMethod = HttpMethod.valueOf(method)
         val httpHeaders = HttpHeaders().apply {
             addAll(headers)
@@ -56,7 +62,7 @@ data class HttpRequestCommand(
         if (options.renewRequestIds) {
             httpHeaders[REQUEST_ID] = listOf(UUID.nameUUIDFromBytes(options.randomSeed.toByteArray()).toString())
         }
-        val request = RequestEntity<String>(body, httpHeaders, httpMethod, uri)
+        val request = RequestEntity<String>(body, httpHeaders, httpMethod, fullUri)
 
         return RestTemplate().exchange(request, Any::class.java)
     }
@@ -71,6 +77,7 @@ data class HttpRequestCommand(
             return HttpRequestCommand(
                 sourceType = request.javaClass,
                 url = request.requestURL.toString(),
+                query = request.queryString,
                 method = request.method,
                 headers = requestHeaders,
             )
