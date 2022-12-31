@@ -2,6 +2,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":model"))
     implementation(project(":event-sourcing"))
+    implementation(project(":event-sourcing-mvc"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")

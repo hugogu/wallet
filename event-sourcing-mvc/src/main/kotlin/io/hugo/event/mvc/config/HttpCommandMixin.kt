@@ -1,7 +1,8 @@
-package io.hugo.event.blocking.mvc
+package io.hugo.event.mvc.config
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import io.hugo.event.mvc.HttpRequestCommand
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,

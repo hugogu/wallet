@@ -1,8 +1,7 @@
-package io.hugo.event.config
+package io.hugo.event.mvc.config
 
 import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.module.SimpleModule
-import io.hugo.event.blocking.mvc.HttpCommandMixin
 import io.hugo.event.model.ExecutableCommand
 
 class EventSourcingJacksonModule : SimpleModule("EventSourcing",

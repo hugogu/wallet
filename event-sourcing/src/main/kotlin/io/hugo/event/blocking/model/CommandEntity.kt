@@ -6,8 +6,6 @@ import io.hugo.event.model.ExecutableCommand
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
-import org.springframework.http.ResponseEntity
-import org.springframework.web.client.RestTemplate
 import java.time.Instant
 import javax.persistence.Column
 import javax.persistence.DiscriminatorColumn
@@ -32,11 +30,4 @@ abstract class CommandEntity<T: ExecutableCommand> : EntityBase() {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     open lateinit var commandData: T
-
-    protected abstract fun <R> executeWith(template: RestTemplate, clazz: Class<R>): ResponseEntity<R>
-
-    fun execute() = run {
-        val template = RestTemplate()
-        executeWith(template, Any::class.java)
-    }
 }

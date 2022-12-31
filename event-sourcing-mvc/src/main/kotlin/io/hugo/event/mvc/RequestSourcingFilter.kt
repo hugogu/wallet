@@ -1,7 +1,6 @@
-package io.hugo.event.blocking.mvc
+package io.hugo.event.mvc
 
 import io.hugo.event.blocking.dal.CommandRepo
-import io.hugo.event.blocking.model.HttpCommandEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
@@ -9,7 +8,7 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class RequestSourcingFilter : OncePerRequestFilter() {
+open class RequestSourcingFilter : OncePerRequestFilter() {
     @Autowired
     private lateinit var commandRepo: CommandRepo
 
@@ -24,14 +23,24 @@ class RequestSourcingFilter : OncePerRequestFilter() {
             return filterChain.doFilter(request, response)
         }
 
-        val entity = HttpCommandEntity.createFrom(request)
+        val entity = buildCommandEntity(request)
         val cachedRequest = ContentCachingRequestWrapper(request)
+        // Cannot read body here otherwise other Filter won't be able to read it.
+        // Introducing a buffered input stream would incur performance penalty by at least 50% in terms of message usage.
 
         try {
             filterChain.doFilter(cachedRequest, response)
         } finally {
+            // contentAsByteArray only have value when the filterChain executed.
             entity.setBody(String(cachedRequest.contentAsByteArray))
-            commandRepo.saveAndFlush(entity)
+            try {
+                commandRepo.saveAndFlush(entity)
+            } catch (ex: Exception) {
+                logger.error("Failed to capture command $entity because ${ex.message}", ex)
+            }
         }
     }
+
+    protected open fun buildCommandEntity(request: HttpServletRequest) =
+        HttpCommandEntity.createFrom(request)
 }

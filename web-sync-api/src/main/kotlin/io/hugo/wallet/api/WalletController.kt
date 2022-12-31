@@ -21,6 +21,7 @@ class WalletController(
     private val transactionRepo: TransactionSyncRepo,
 ) {
     @PostMapping("/account")
+    @Transactional
     fun createAccount(
         @RequestBody request: AccountCreationRequest,
         @RequestHeader("X-Request-ID") requestId: UUID,
