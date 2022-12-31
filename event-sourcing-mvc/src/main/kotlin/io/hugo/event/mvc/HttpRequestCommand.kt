@@ -15,7 +15,7 @@ import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @JsonPropertyOrder(
-    value = ["type", "method", "path", "headers"]
+    value = ["type", "sourceType", "method", "path", "headers"]
 )
 data class HttpRequestCommand(
     /**
@@ -27,9 +27,22 @@ data class HttpRequestCommand(
     val method: String = "",
     val url: String = "",
     val body: String? = null,
+
+    /**
+     * The headers have to be immutable to yield a stable id.
+     */
     val headers: Map<String, String> = emptyMap(),
 ) : ExecutableCommand {
     val type = TYPE
+
+    override val id: UUID by lazy {
+        headers[REQUEST_ID.lowercase()]?.let {
+            UUID.nameUUIDFromBytes((it + url).toByteArray())
+        } ?: run {
+            logger.warn("No request id found in HTTP request, fail back to generation.")
+            UUID.randomUUID()
+        }
+    }
 
     override fun execute(options: CommandOptions): Any {
         val uri = URI.create(url)
@@ -37,13 +50,12 @@ data class HttpRequestCommand(
         val httpHeaders = HttpHeaders().apply {
             headers.forEach(::add)
         }
-        httpHeaders.add(FORWARDED_FOR, httpHeaders.getFirst(HttpHeaders.HOST))
-        httpHeaders.add(HttpHeaders.HOST, InetAddress.getLocalHost().hostName)
+        httpHeaders.add(FORWARDED_FOR, httpHeaders.getFirst(HttpHeaders.HOST.lowercase()))
+        httpHeaders[HttpHeaders.HOST] = InetAddress.getLocalHost().hostName
         if (options.renewRequestIds) {
-            // TODO: Remove random UUID.
-            httpHeaders.add(REQUEST_ID, UUID.randomUUID().toString())
+            httpHeaders[REQUEST_ID] = listOf(UUID.nameUUIDFromBytes(options.randomSeed.toByteArray()).toString())
         }
-        val request = RequestEntity<String>(httpHeaders, httpMethod, uri)
+        val request = RequestEntity<String>(body, httpHeaders, httpMethod, uri)
 
         return RestTemplate().exchange(request, Any::class.java)
     }
@@ -59,7 +71,7 @@ data class HttpRequestCommand(
                 sourceType = request.javaClass,
                 url = request.requestURL.toString(),
                 method = request.method,
-                headers = requestHeaders.map { it.key to it.value.first() }.toMap(),
+                headers = requestHeaders.map { it.key.lowercase() to it.value.first() }.toMap(),
             )
         }
 

@@ -1,6 +1,7 @@
 package io.hugo.event.mvc
 
 import io.hugo.event.blocking.dal.CommandRepo
+import io.hugo.event.model.EventSourcingContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
@@ -19,11 +20,15 @@ open class RequestSourcingFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        check(EventSourcingContext.getCurrentCommand() == null) {
+            "The current thread is already processing a command ${EventSourcingContext.getCurrentCommand()}"
+        }
+
         if (exclusivePaths.any { request.requestURI.startsWith(it) }) {
             return filterChain.doFilter(request, response)
         }
-
         val entity = buildCommandEntity(request)
+        EventSourcingContext.setCurrentCommand(entity.commandData)
         val cachedRequest = ContentCachingRequestWrapper(request)
         // Cannot read body here otherwise other Filter won't be able to read it.
         // Introducing a buffered input stream would incur performance penalty by at least 50% in terms of message usage.
@@ -31,6 +36,7 @@ open class RequestSourcingFilter : OncePerRequestFilter() {
         try {
             filterChain.doFilter(cachedRequest, response)
         } finally {
+            EventSourcingContext.setCurrentCommand(null)
             // contentAsByteArray only have value when the filterChain executed.
             entity.setBody(String(cachedRequest.contentAsByteArray))
             try {

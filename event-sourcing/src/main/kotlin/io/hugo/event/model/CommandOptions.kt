@@ -6,4 +6,6 @@ data class CommandOptions(
      * Set this to `true` to generate new IDs.
      */
     val renewRequestIds: Boolean = false,
+
+    val randomSeed: String = "",
 )
