@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface CommandRepo : JpaRepository<CommandEntity, UUID> {
+interface CommandRepo : JpaRepository<CommandEntity<*>, UUID> {
 }

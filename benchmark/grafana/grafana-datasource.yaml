@@ -7,6 +7,18 @@ datasources:
     database: k6
     url: http://influxdb:8086
     isDefault: true
+  - name: InfluxDB_GIT
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    secureJsonData:
+      token:  $INFLUXDB_API_TOKEN
+    jsonData:
+      version: Flux
+      organization: $INFLUXDB_ORG
+      defaultBucket: $INFLUXDB_DEFAULT_BUCKET
+      tlsSkipVerify: true
+      timeout: 600
   - name: SpringPrometheus
     type: prometheus
     access: proxy

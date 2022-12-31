@@ -10,8 +10,6 @@ import java.util.UUID
 
 @Repository
 interface CommandRepo : R2dbcRepository<CommandEntity, UUID> {
-
-    @JvmDefault
     fun saveCommandData(data: String, type: String, id: UUID): Mono<CommandEntity> {
         val entity = CommandEntity().also {
             it.setId(id)

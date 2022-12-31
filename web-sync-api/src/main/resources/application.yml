@@ -12,4 +12,4 @@ management:
         include: "*"
 logging:
   level:
-    root: info
+    root: debug

@@ -20,7 +20,7 @@ services:
     image: "postgres:14-alpine"
     hostname: postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_DB=wallet
       - POSTGRES_PASSWORD=postgres
@@ -35,6 +35,30 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+  zookeeper:
+    image: zookeeper:3.5.8
+    ports:
+      - "2181:2181"
+    restart: unless-stopped
+
+  kafka:
+    image: wurstmeister/kafka:2.12-2.4.1
+    expose:
+      - '29092'
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,LOCAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,LOCAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LOCAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "Transaction:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus
     ports:
@@ -49,11 +73,23 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
+      - INFLUXDB_API_TOKEN=qKbqswlETpniJPUp7oQfHorvzJRJa0DsWKJ35rVH4TwOusWpzylLQFHzwN8LCp0nh7yOH8Bb10p16IzvaWE4aQ==
+      - INFLUXDB_ORG=hugo
+      - INFLUXDB_DEFAULT_BUCKET=k6
     volumes:
       - ./benchmark/grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
   influxdb:
-    image: influxdb:1.7.4
+    image: influxdb:2.2
     ports:
       - "8086:8086"
     environment:
       - INFLUXDB_DB=k6
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=root
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password1
+      - DOCKER_INFLUXDB_INIT_ORG=hugo
+      - DOCKER_INFLUXDB_INIT_BUCKET=k6
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=secret_token
+      - DOCKER_INFLUXD_SESSION_LENGTH=1440
+    volumes:
+      - ./tmp/influxdb:/var/lib/influxdb

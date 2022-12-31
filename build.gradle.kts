@@ -18,6 +18,7 @@ allprojects {
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
     apply(plugin = "org.springframework.boot")
@@ -48,7 +49,7 @@ subprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict", "-Xjvm-default=compatibility")
+            freeCompilerArgs = listOf("-Xjsr305=strict", "-Xjvm-default=all")
             jvmTarget = "11"
         }
     }
