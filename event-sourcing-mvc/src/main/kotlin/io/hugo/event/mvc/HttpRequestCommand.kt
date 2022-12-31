@@ -13,6 +13,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import java.net.InetAddress
 import java.net.URI
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
@@ -28,7 +29,7 @@ data class HttpRequestCommand(
     val sourceType: Class<*> = Any::class.java,
     val method: String = "",
     val url: String = "",
-    val query: String,
+    val query: String? = null,
     val body: String? = null,
 
     /**
@@ -47,9 +48,19 @@ data class HttpRequestCommand(
         }
     }
 
+    @JsonIgnore
+    fun getCommandTime(): ZonedDateTime? {
+        return try {
+            HttpHeaders(headers).getFirstZonedDateTime(HttpHeaders.DATE)
+        } catch (ex: IllegalArgumentException) {
+            logger.warn(ex.message)
+            null
+        }
+    }
+
     @get:JsonIgnore
     internal val fullUri: URI by lazy {
-        URI.create("$url?$query")
+        URI.create("$url?${query.orEmpty()}")
     }
 
     override fun execute(options: CommandOptions): Any {

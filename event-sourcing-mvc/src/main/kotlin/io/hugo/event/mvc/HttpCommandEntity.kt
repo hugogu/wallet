@@ -1,16 +1,13 @@
 package io.hugo.event.mvc
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import io.hugo.event.blocking.model.CommandEntity
-import org.hibernate.annotations.TypeDef
-import org.hibernate.annotations.TypeDefs
+import java.time.Instant
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.servlet.http.HttpServletRequest
 
 @Entity
 @DiscriminatorValue("HTTP_REQUEST")
-@TypeDefs(TypeDef(name = "jsonb", typeClass = JsonBinaryType::class))
 class HttpCommandEntity : CommandEntity<HttpRequestCommand>() {
     fun setBody(body: String) {
         commandData = commandData.copy(body = body)
@@ -23,6 +20,7 @@ class HttpCommandEntity : CommandEntity<HttpRequestCommand>() {
             entity.new = true
             entity.setId(command.id)
             entity.commandData = command
+            entity.commandTime = command.getCommandTime()?.toInstant() ?: Instant.now()
 
             return entity
         }

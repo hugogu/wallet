@@ -21,7 +21,7 @@ import javax.persistence.Table
 @DiscriminatorColumn(
     name = "command_type",
     discriminatorType = DiscriminatorType.STRING,
-    length = 32,
+    length = 16,
 )
 @TypeDefs(TypeDef(name = "jsonb", typeClass = JsonBinaryType::class))
 abstract class CommandEntity<T: ExecutableCommand> : EntityBase() {
