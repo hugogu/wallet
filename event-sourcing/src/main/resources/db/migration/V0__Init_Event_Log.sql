@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS command
 CREATE TABLE IF NOT EXISTS event
 (
     id           uuid PRIMARY KEY,
-    command_id   uuid        NOT NULL,
-    aggregate_id uuid        NOT NULL,
+    command_id   uuid        NULL,
+    aggregate_id uuid        NULL,
     event_type   varchar(16) NOT NULL,
     event_data   jsonb       NOT NULL,
     event_time   timestamp   NOT NULL DEFAULT now(),

@@ -1,7 +1,9 @@
 package io.hugo.event.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.hugo.common.serialization.SpringObjectMapperSupplier
 import io.r2dbc.spi.ConnectionFactory
+import org.springframework.beans.factory.SmartInitializingSingleton
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -19,6 +21,14 @@ class EventSourcingAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     fun objectMapper(context: ApplicationContext) = SpringObjectMapperSupplier.INSTANCE
+
+    @Bean
+    fun objectMapperEventInitialization(mapper: ObjectMapper) = SmartInitializingSingleton {
+        mapper.registerModule(EventSourcingJacksonModule())
+        if (mapper !== SpringObjectMapperSupplier.INSTANCE) {
+            SpringObjectMapperSupplier.INSTANCE.registerModule(EventSourcingJacksonModule())
+        }
+    }
 
     @Configuration
     @ConditionalOnClass(ConnectionFactory::class)
