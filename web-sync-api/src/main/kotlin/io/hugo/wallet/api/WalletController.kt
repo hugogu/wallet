@@ -1,9 +1,11 @@
 package io.hugo.wallet.api
 
 import io.hugo.wallet.api.model.*
+import io.hugo.wallet.config.EventTopics
 import io.hugo.wallet.dal.AccountSyncRepo
 import io.hugo.wallet.dal.TransactionSyncRepo
 import io.hugo.wallet.model.AccountEntity
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,6 +21,7 @@ import java.util.UUID
 class WalletController(
     private val accountRepo: AccountSyncRepo,
     private val transactionRepo: TransactionSyncRepo,
+    private val kafkaTemplate: KafkaTemplate<String, Any>,
 ) {
     @PostMapping("/account")
     @Transactional
@@ -47,6 +50,9 @@ class WalletController(
         val transaction = from.transferTo(to, request.monetary).also {
             it.setId(requestId ?: UUID.randomUUID())
             it.new = true
+        }
+        transaction.getBalanceActivities().toList().forEach {
+            kafkaTemplate.send(EventTopics.BALANCE_TOPIC, it.accountId.toString(), it)
         }
         transactionRepo.save(transaction)
 
