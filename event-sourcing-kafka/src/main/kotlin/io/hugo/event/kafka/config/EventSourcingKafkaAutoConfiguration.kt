@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType
 import io.hugo.common.serialization.SpringObjectMapperSupplier
 import io.hugo.event.kafka.DefaultRecordDataEventConverter
 import io.hugo.event.kafka.EventSourcingProducerInterceptor
-import io.hugo.event.kafka.KafkaMessageEvent
+import io.hugo.event.model.event.RoutedMessageEvent
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.springframework.beans.factory.SmartInitializingSingleton
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -33,9 +33,9 @@ class EventSourcingKafkaAutoConfiguration {
 
     @Bean
     fun objectMapperKafkaInitialization(mapper: ObjectMapper) = SmartInitializingSingleton {
-        mapper.registerSubtypes(NamedType(KafkaMessageEvent::class.java, KafkaMessageEvent.TYPE))
+        mapper.registerSubtypes(NamedType(RoutedMessageEvent::class.java, RoutedMessageEvent.TYPE))
         if (mapper !== SpringObjectMapperSupplier.INSTANCE) {
-            SpringObjectMapperSupplier.INSTANCE.registerSubtypes(NamedType(KafkaMessageEvent::class.java, KafkaMessageEvent.TYPE))
+            SpringObjectMapperSupplier.INSTANCE.registerSubtypes(NamedType(RoutedMessageEvent::class.java, RoutedMessageEvent.TYPE))
         }
     }
 

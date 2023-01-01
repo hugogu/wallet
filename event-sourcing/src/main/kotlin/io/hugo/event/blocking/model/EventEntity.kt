@@ -17,6 +17,7 @@ import javax.persistence.Entity
 import javax.persistence.Inheritance
 import javax.persistence.InheritanceType
 import javax.persistence.Table
+import javax.persistence.Transient
 
 @Entity
 @Table(name = "event")
@@ -38,6 +39,11 @@ open class EventEntity<T: DomainEvent> : EntityBase() {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     lateinit var eventData: T
+
+    @Transient
+    open fun getEvent(): Any {
+        return eventData
+    }
 }
 
 @Entity

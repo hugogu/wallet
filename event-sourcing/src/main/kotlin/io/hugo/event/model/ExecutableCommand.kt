@@ -1,6 +1,7 @@
 package io.hugo.event.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import io.hugo.event.model.command.CommandOptions
 import java.util.UUID
 
 interface ExecutableCommand {

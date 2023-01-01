@@ -1,4 +1,4 @@
-package io.hugo.event.model
+package io.hugo.event.model.command
 
 data class CommandOptions(
     /**

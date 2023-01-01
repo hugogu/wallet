@@ -7,7 +7,7 @@ import org.apache.kafka.clients.producer.RecordMetadata
 import org.springframework.context.ApplicationContext
 import java.lang.Exception
 
-class EventSourcingProducerInterceptor<K, V> : ProducerInterceptor<K, V> {
+class EventSourcingProducerInterceptor<K, V> :  ProducerInterceptor<K, V> {
     private var configs: Map<String, Any?> = emptyMap()
 
     private fun getEventRepo(): EventRepo {
