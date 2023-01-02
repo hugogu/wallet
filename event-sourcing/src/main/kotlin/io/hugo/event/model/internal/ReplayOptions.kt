@@ -1,6 +1,6 @@
-package io.hugo.event.model.command
+package io.hugo.event.model.internal
 
-data class CommandOptions(
+data class ReplayOptions(
     /**
      * By default, the original requestId, if available, will be used in retrying a command.
      * Set this to `true` to generate new IDs.

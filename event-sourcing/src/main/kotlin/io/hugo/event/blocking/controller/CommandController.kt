@@ -1,7 +1,7 @@
 package io.hugo.event.blocking.controller
 
 import io.hugo.event.blocking.dal.CommandRepo
-import io.hugo.event.model.command.CommandOptions
+import io.hugo.event.model.internal.ReplayOptions
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,11 +16,11 @@ class CommandController(
     @PostMapping(path = ["/operation/command/{id}"])
     fun replay(
         @PathVariable id: UUID,
-        @RequestBody(required = false) options: CommandOptions? = null,
+        @RequestBody(required = false) options: ReplayOptions? = null,
     ): Any {
         val entity = commandRepo.getReferenceById(id)
         return try {
-            val result = entity.commandData.execute(options ?: CommandOptions())
+            val result = entity.commandData.execute(options ?: ReplayOptions())
             logger.info("Executed ${entity.commandData} and got $result")
             result
         } catch (ex: Exception) {

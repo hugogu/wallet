@@ -15,9 +15,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 
 @AutoConfiguration
+@ComponentScan("io.hugo.event.kafka.service")
 class EventSourcingKafkaAutoConfiguration {
     @Bean
     fun kafkaProducerFactorySourcingCustomizer(context: ApplicationContext) = DefaultKafkaProducerFactoryCustomizer {

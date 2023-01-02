@@ -1,6 +1,7 @@
 package io.hugo.event.kafka
 
 import io.hugo.event.blocking.dal.EventRepo
+import io.hugo.event.kafka.service.CommandReplayListener
 import org.apache.kafka.clients.producer.ProducerInterceptor
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -19,8 +20,11 @@ class EventSourcingProducerInterceptor<K, V> :  ProducerInterceptor<K, V> {
     }
 
     override fun onSend(record: ProducerRecord<K, V>): ProducerRecord<K, V> {
-        val entity = getEventConverter().convert(record, configs)
-        getEventRepo().saveAndFlush(entity)
+        // Do not record it again when it is being replayed.
+        if (record.headers().lastHeader(CommandReplayListener.REPLAY_MARK) == null) {
+            val entity = getEventConverter().convert(record, configs)
+            getEventRepo().saveAndFlush(entity)
+        }
 
         return record
     }

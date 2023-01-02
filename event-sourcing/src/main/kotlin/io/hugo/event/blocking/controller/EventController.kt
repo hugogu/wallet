@@ -1,9 +1,9 @@
 package io.hugo.event.blocking.controller
 
 import io.hugo.event.blocking.dal.EventRepo
-import io.hugo.event.model.command.CommandOptions
 import io.hugo.event.model.event.EventOptions
 import io.hugo.event.model.event.EventPublishTarget
+import io.hugo.event.model.internal.ReplayCommand
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,7 +25,10 @@ class EventController(
         val entity = eventRepo.getReferenceById(id)
         return try {
             when (options.mode) {
-                EventPublishTarget.APP_EVENT -> eventPublisher.publishEvent(entity.getEvent())
+                EventPublishTarget.APP_EVENT -> {
+                    val event = ReplayCommand(entity)
+                    eventPublisher.publishEvent(event)
+                }
                 EventPublishTarget.KAFKA -> TODO("to support")
             }
             entity

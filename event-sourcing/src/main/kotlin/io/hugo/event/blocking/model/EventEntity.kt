@@ -3,7 +3,6 @@ package io.hugo.event.blocking.model
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import io.hugo.common.model.EntityBase
 import io.hugo.event.model.DomainEvent
-import io.hugo.event.model.event.PropertyChangedEvent
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
@@ -12,7 +11,6 @@ import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.DiscriminatorColumn
 import javax.persistence.DiscriminatorType
-import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.persistence.Inheritance
 import javax.persistence.InheritanceType
@@ -28,11 +26,11 @@ import javax.persistence.Transient
     length = 16,
 )
 @TypeDefs(TypeDef(name = "jsonb", typeClass = JsonBinaryType::class))
-open class EventEntity<T: DomainEvent> : EntityBase() {
+abstract class EventEntity<T: DomainEvent> : EntityBase() {
 
-    lateinit var commandId: UUID
+    var commandId: UUID? = null
 
-    lateinit var aggregateId: UUID
+    var aggregateId: UUID? = null
 
     var eventTime: Instant = Instant.EPOCH
 
@@ -45,7 +43,3 @@ open class EventEntity<T: DomainEvent> : EntityBase() {
         return eventData
     }
 }
-
-@Entity
-@DiscriminatorValue("DATA_CHANGED")
-class DomainDataEventEntity : EventEntity<PropertyChangedEvent>()

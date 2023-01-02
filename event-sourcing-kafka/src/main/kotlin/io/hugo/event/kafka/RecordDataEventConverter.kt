@@ -5,6 +5,7 @@ import io.hugo.event.model.EventSourcingContext
 import io.hugo.event.model.event.RoutedEventSource
 import io.hugo.event.model.event.RoutedMessageEvent
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.header.internals.RecordHeader
 import java.time.Instant
 import java.util.UUID
 
@@ -14,6 +15,8 @@ interface RecordDataEventConverter<K, V> {
         record: ProducerRecord<K, V>,
         configs: Map<String, Any?>
     ): RoutedMessageEventEntity
+
+    fun convertBack(entity: RoutedMessageEventEntity): ProducerRecord<K, V>
 }
 
 class DefaultRecordDataEventConverter<K, V> : RecordDataEventConverter<K, V> {
@@ -30,17 +33,33 @@ class DefaultRecordDataEventConverter<K, V> : RecordDataEventConverter<K, V> {
             message = record.value(),
             timestamp = Instant.ofEpochMilli(record.timestamp() ?: System.currentTimeMillis()),
             routingParams = configs + mapOf(
-                "topic" to record.topic(),
-                "partition" to record.partition(),
-                "key" to record.key(),
+                TOPIC to record.topic(),
+                PARTITION to record.partition(),
+                KEY to record.key(),
             ),
         )
         entity.new = true
         entity.setId(UUID.nameUUIDFromBytes(eventId.toByteArray()))
         entity.eventData = kafkaEvent
         entity.eventTime = kafkaEvent.timestamp
-        entity.commandId = EventSourcingContext.getCurrentCommand()!!.id
+        entity.commandId = EventSourcingContext.getCurrentCommand()?.id
 
         return entity
+    }
+
+    override fun convertBack(entity: RoutedMessageEventEntity): ProducerRecord<K, V> {
+        val event = entity.eventData
+        val topic = event.routingParams[TOPIC].toString()
+        val partition = event.routingParams[PARTITION]?.let { Integer.parseInt(it.toString()) }
+        val key = event.routingParams[KEY] as K
+        val headers = event.headers.map { RecordHeader(it.key, it.value.toByteArray()) }
+
+        return ProducerRecord<K, V>(topic, partition, event.timestamp.toEpochMilli(), key, event.message as V, headers)
+    }
+
+    companion object {
+        private const val TOPIC = "topic"
+        private const val PARTITION = "partition"
+        private const val KEY = "key"
     }
 }

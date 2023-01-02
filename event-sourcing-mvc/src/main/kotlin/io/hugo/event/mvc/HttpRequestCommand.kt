@@ -3,7 +3,7 @@ package io.hugo.event.mvc
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import io.hugo.common.mvc.HttpServletRequestUtils.readHeaders
-import io.hugo.event.model.command.CommandOptions
+import io.hugo.event.model.internal.ReplayOptions
 import io.hugo.event.model.ExecutableCommand
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -63,7 +63,7 @@ data class HttpRequestCommand(
         URI.create("$url?${query.orEmpty()}")
     }
 
-    override fun execute(options: CommandOptions): Any {
+    override fun execute(options: ReplayOptions): Any {
         val httpMethod = HttpMethod.valueOf(method)
         val httpHeaders = HttpHeaders().apply {
             addAll(headers)
