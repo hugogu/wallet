@@ -4,7 +4,7 @@ import io.hugo.event.model.DomainEvent
 import java.time.Instant
 
 data class RoutedMessageEvent<V>(
-    val sourceType: RoutedEventSource,
+    val source: String,
     val headers: Map<String, String> = emptyMap(),
     val message: V? = null,
     val timestamp: Instant = Instant.EPOCH,

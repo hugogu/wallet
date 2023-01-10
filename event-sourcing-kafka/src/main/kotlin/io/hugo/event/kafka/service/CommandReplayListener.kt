@@ -18,10 +18,11 @@ class CommandReplayListener(
     fun onReplayCommand(command: ReplayCommand<*>) {
         assert(command.entity is RoutedMessageEventEntity)
         val entity = command.entity as RoutedMessageEventEntity
-        val record = converter.convertBack(entity)
-        record.headers().add(REPLAY_MARK, "true".toByteArray())
+        converter.convertBack(entity)?.let {
+            it.headers().add(REPLAY_MARK, "true".toByteArray())
 
-        kafkaTemplate.send(record)
+            kafkaTemplate.send(it).completable()
+        }
     }
 
     companion object {

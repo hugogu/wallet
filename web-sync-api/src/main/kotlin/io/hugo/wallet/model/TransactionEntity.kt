@@ -41,7 +41,7 @@ class TransactionEntity : EntityBase() {
 
     @JsonIgnore
     fun getBalanceActivities(): Pair<AccountBalanceActivity, AccountBalanceActivity> {
-        return AccountBalanceActivity(fromAccount, getTransactionAmount(), transactionTime) to
-            AccountBalanceActivity(toAccount, getTransactionAmount(), transactionTime)
+        return AccountBalanceActivity(id!!, fromAccount, getTransactionAmount().negate(), transactionTime) to
+            AccountBalanceActivity(id!!, toAccount, getTransactionAmount(), transactionTime)
     }
 }
