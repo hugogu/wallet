@@ -4,8 +4,10 @@ services:
     image: app-web-sync-api:latest
     ports:
       - "8082:8080"
+      - "5005:5005"
     environment:
       - SPRING_PROFILES_ACTIVE=compose
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - wallet-postgres
   wallet-api:
