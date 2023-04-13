@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "2.7.0"
+    id("org.springframework.boot") version "2.7.0" apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
@@ -21,7 +21,6 @@ allprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
-    apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 }
 
@@ -58,12 +57,14 @@ subprojects {
         useJUnitPlatform()
     }
 
-    tasks.named<BootBuildImage>("bootBuildImage") {
-        imageName = "app-${project.name}"
-        // Refers to https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/
-        // Refers to https://paketo.io/docs/howto/java
-        environment = mapOf(
-            "BP_JVM_VERSION" to "11.*"
-        )
+    tasks.findByName("bootBuildImage")?.let {
+        with(it as BootBuildImage) {
+            imageName = "app-${project.name}"
+            // Refers to https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/
+            // Refers to https://paketo.io/docs/howto/java
+            environment = mapOf(
+                "BP_JVM_VERSION" to "11.*"
+            )
+        }
     }
 }

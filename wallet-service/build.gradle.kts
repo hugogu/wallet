@@ -1,3 +1,5 @@
+apply(plugin = "org.springframework.boot")
+
 dependencies {
     implementation(project(":data-model"))
     implementation(project(":event-sourcing-kafka"))

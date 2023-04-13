@@ -1,3 +1,5 @@
+apply(plugin = "org.springframework.boot")
+
 dependencies {
     implementation(project(":common"))
     implementation(project(":model"))
