@@ -7,7 +7,10 @@ spring:
     bootstrap-servers: localhost:29092
     consumer:
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       properties:
-        spring.json.trusted.packages: io.hugo.*
+        spring.json.trusted.packages: "*"
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+logging:
+  level:
+    root: info

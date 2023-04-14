@@ -8,4 +8,27 @@ spring:
   kafka:
     bootstrap-servers: localhost:29092
     producer:
+      # This is still required for the producer to work in cloud stream
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  cloud:
+    stream:
+      bindings:
+        httpMessageSupplier-out-0:
+          destination: Callbacks
+          content-type: application/json
+          producer:
+            # This is to make output message as JSON, otherwise it will be byte[]
+            use-native-encoding: true
+      function:
+        definition: httpMessageSupplier
+
+      kafka:
+        binder:
+          brokers: ${spring.kafka.bootstrap-servers}
+          auto-create-topics: true
+          producer-properties:
+            interceptor.classes: io.hugo.event.kafka.EventSourcingProducerInterceptor
+
+logging:
+  level:
+    root: info
