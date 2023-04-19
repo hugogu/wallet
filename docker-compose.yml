@@ -70,6 +70,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  kpow:
+    image: factorhouse/kpow-ce
+    restart: always
+    ports:
+      - "3001:3000"
+    depends_on:
+      - kafka
+    env_file:
+      - local.env
+
   prometheus:
     image: prom/prometheus
     ports:
