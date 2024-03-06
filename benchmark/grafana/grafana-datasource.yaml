@@ -7,6 +7,12 @@ datasources:
     database: k6
     url: http://influxdb:8086
     isDefault: true
+    secureJsonData:
+      httpHeaderValue1:  'Token $INFLUXDB_API_TOKEN'
+    jsonData:
+      dbName: k6
+      httpMode: GET
+      httpHeaderName1: 'Authorization'
   - name: InfluxDB_GIT
     type: influxdb
     access: proxy
@@ -14,7 +20,6 @@ datasources:
     secureJsonData:
       token:  $INFLUXDB_API_TOKEN
     jsonData:
-      version: Flux
       organization: $INFLUXDB_ORG
       defaultBucket: $INFLUXDB_DEFAULT_BUCKET
       tlsSkipVerify: true

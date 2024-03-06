@@ -1,7 +1,7 @@
 version: '3'
 services:
   wallet-sync-api:
-    image: app-web-sync-api:latest
+    image: web-sync-api:0.0.1-SNAPSHOT
     ports:
       - "8082:8082"
       - "5005:5005"
@@ -15,11 +15,12 @@ services:
       - wallet-postgres
       - kafka
   wallet-api:
-    image: app-web-api:latest
+    image: web-api:0.0.1-SNAPSHOT
     ports:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=compose
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - wallet-postgres
       - kafka
@@ -75,6 +76,9 @@ services:
       - "9090:9090"
     volumes:
       - ./benchmark/prometheus:/etc/prometheus/
+    command:
+      - '--web.enable-remote-write-receiver'
+      - '--config.file=/etc/prometheus/prometheus.yml'
   grafana:
     image: grafana/grafana
     ports:
@@ -83,17 +87,18 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
-      - INFLUXDB_API_TOKEN=qKbqswlETpniJPUp7oQfHorvzJRJa0DsWKJ35rVH4TwOusWpzylLQFHzwN8LCp0nh7yOH8Bb10p16IzvaWE4aQ==
+      - INFLUXDB_API_TOKEN=secret_token
       - INFLUXDB_ORG=hugo
       - INFLUXDB_DEFAULT_BUCKET=k6
     volumes:
       - ./benchmark/grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
   influxdb:
-    image: influxdb:2.2
+    image: influxdb:2.7
     ports:
       - "8086:8086"
     environment:
       - INFLUXDB_DB=k6
+      - INFLUXD_LOG_LEVEL=debug
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=root
       - DOCKER_INFLUXDB_INIT_PASSWORD=password1
@@ -103,3 +108,16 @@ services:
       - DOCKER_INFLUXD_SESSION_LENGTH=1440
     volumes:
       - ./tmp/influxdb:/var/lib/influxdb
+      - ./benchmark/influxdb/config.yml:/etc/defaults/influxdb2/config.yml
+  k6:
+    build: ./benchmark/k6
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=xk6-influxdb=http://localhost:8086
+      - K6_INFLUXDB_ORGANIZATION=hugo
+      - K6_INFLUXDB_BUCKET=k6
+      - K6_INFLUXDB_INSECURE=true
+      - K6_INFLUXDB_TOKEN=secret_token
+    volumes:
+      - ./benchmark/k6-scripts:/scripts
