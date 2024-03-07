@@ -9,6 +9,7 @@ data class RoutedMessageEvent<V>(
     val message: V? = null,
     val timestamp: Instant = Instant.EPOCH,
     val routingParams: Map<String, Any?> = emptyMap(),
+    override var eventTime: Instant = Instant.MAX,
 ) : DomainEvent {
     val type = TYPE
 

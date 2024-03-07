@@ -1,6 +1,7 @@
 package io.hugo.event.model
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.time.Instant
 
 /**
  * A marker interface represents a domain event data.
@@ -10,4 +11,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     include = JsonTypeInfo.As.EXISTING_PROPERTY,
     property = "type"
 )
-interface DomainEvent
+interface DomainEvent {
+    var eventTime: Instant
+}

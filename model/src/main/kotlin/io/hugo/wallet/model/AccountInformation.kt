@@ -1,4 +1,5 @@
 package io.hugo.wallet.model
 
-class AccountInformation {
-}
+data class AccountInformation(
+    val accountName: String
+)

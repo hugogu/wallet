@@ -7,6 +7,12 @@ spring:
     bootstrap-servers: localhost:29092
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+    show-sql: true
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
 
 management:
   endpoints:
@@ -15,8 +21,8 @@ management:
         include: "*"
 logging:
   level:
-    root: debug
-
+    root: info
+    org.hibernate.SQL: debug
 
 elide:
   json-api:
@@ -26,4 +32,8 @@ elide:
     path: /doc
     enabled: true
   graphql:
-    enabled: false
+    enabled: true
+    path: /graphql/api
+    subscription:
+      enabled: true
+      path: /subscription

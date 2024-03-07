@@ -2,6 +2,7 @@ package io.hugo.event.mvc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.yahoo.elide.annotation.Include
 import io.hugo.common.mvc.HttpServletRequestUtils.readHeaders
 import io.hugo.event.model.internal.ReplayOptions
 import io.hugo.event.model.ExecutableCommand
@@ -13,6 +14,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import java.net.InetAddress
 import java.net.URI
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest
 @JsonPropertyOrder(
     value = ["type", "sourceType", "method", "path", "headers"]
 )
+@Include
 data class HttpRequestCommand(
     /**
      * The source refers to the original data used to capture this [HttpRequestCommand]
@@ -36,6 +39,7 @@ data class HttpRequestCommand(
      * The headers have to be immutable to yield a stable id.
      */
     val headers: MultiValueMap<String, String> = HttpHeaders(),
+    override var timestamp: Instant = Instant.now(),
 ) : ExecutableCommand {
     val type = TYPE
 
