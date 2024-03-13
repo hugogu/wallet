@@ -16,3 +16,14 @@ management:
 logging:
   level:
     root: debug
+
+
+elide:
+  json-api:
+    path: /json
+    enabled: true
+  swagger:
+    path: /doc
+    enabled: true
+  graphql:
+    enabled: false

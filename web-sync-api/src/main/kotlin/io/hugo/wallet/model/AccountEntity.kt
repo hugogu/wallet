@@ -1,5 +1,6 @@
 package io.hugo.wallet.model
 
+import com.yahoo.elide.annotation.Include
 import io.hugo.common.model.EntityBase
 import org.hibernate.annotations.Type
 import org.springframework.data.annotation.LastModifiedDate
@@ -9,6 +10,7 @@ import java.time.Instant
 import javax.money.MonetaryAmount
 import javax.persistence.*
 
+@Include
 @Entity
 @Table(name = "account")
 class AccountEntity : EntityBase() {

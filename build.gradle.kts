@@ -34,6 +34,7 @@ subprojects {
             mavenBom(SpringBootPlugin.BOM_COORDINATES)
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.3")
             mavenBom("org.springframework.data:spring-data-bom:2021.2.0")
+            mavenBom("com.yahoo.elide:elide-bom:6.1.12")
         }
     }
 

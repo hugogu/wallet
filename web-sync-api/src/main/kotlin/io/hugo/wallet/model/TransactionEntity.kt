@@ -1,6 +1,7 @@
 package io.hugo.wallet.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.yahoo.elide.annotation.Include
 import io.hugo.common.model.EntityBase
 import io.hugo.wallet.model.event.AccountBalanceActivity
 import org.javamoney.moneta.FastMoney
@@ -14,6 +15,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
+@Include
 @Entity
 @Table(name = "transaction")
 class TransactionEntity : EntityBase() {

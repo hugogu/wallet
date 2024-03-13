@@ -1,11 +1,13 @@
 package io.hugo.event.mvc
 
+import com.yahoo.elide.annotation.Include
 import io.hugo.event.blocking.model.CommandEntity
 import java.time.Instant
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.servlet.http.HttpServletRequest
 
+@Include
 @Entity
 @DiscriminatorValue("HTTP_REQUEST")
 class HttpCommandEntity : CommandEntity<HttpRequestCommand>() {
