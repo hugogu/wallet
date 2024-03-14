@@ -1,4 +1,10 @@
+server:
+  port: 8083
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet
+    username: postgres
+    password: postgres
   kafka:
     bootstrap-servers: localhost:29092
     producer:
