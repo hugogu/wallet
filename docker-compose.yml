@@ -3,13 +3,17 @@ services:
   wallet-sync-api:
     image: app-web-sync-api:latest
     ports:
-      - "8082:8080"
+      - "8082:8082"
       - "5005:5005"
     environment:
+      # Used only when the value are specific to the environment.
       - SPRING_PROFILES_ACTIVE=compose
+      - SERVER_PORT=8082
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
       - wallet-postgres
+      - kafka
   wallet-api:
     image: app-web-api:latest
     ports:
@@ -18,6 +22,7 @@ services:
       - SPRING_PROFILES_ACTIVE=compose
     depends_on:
       - wallet-postgres
+      - kafka
   wallet-postgres:
     image: "postgres:14-alpine"
     hostname: postgres
@@ -52,6 +57,9 @@ services:
       - "29092:29092"
     environment:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,LOCAL://0.0.0.0:29092
+      # When it is used for local, `localhost` shall be used.
+      # When it is used within docker, `kafka` shall be used.
+      # Use 9092 from docker host, 29092 from local host
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,LOCAL://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LOCAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
