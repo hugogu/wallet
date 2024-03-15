@@ -1,4 +1,4 @@
-package io.hugo.event.mvc.config
+package io.hugo.event.model.http.config
 
 import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.module.SimpleModule

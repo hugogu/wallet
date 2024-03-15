@@ -1,8 +1,7 @@
-package io.hugo.event.mvc
+package io.hugo.event.model.http
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import io.hugo.common.mvc.HttpServletRequestUtils.readHeaders
 import io.hugo.event.model.internal.ReplayOptions
 import io.hugo.event.model.ExecutableCommand
 import org.slf4j.LoggerFactory
@@ -15,7 +14,6 @@ import java.net.InetAddress
 import java.net.URI
 import java.time.ZonedDateTime
 import java.util.UUID
-import javax.servlet.http.HttpServletRequest
 
 @JsonPropertyOrder(
     value = ["type", "sourceType", "method", "path", "headers"]
@@ -79,20 +77,9 @@ data class HttpRequestCommand(
     }
 
     companion object {
-        internal const val TYPE = "HttpRequest"
+        const val TYPE = "HttpRequest"
         internal const val REQUEST_ID = "X-Request-ID"
         internal const val FORWARDED_FOR = "X-Forwarded-For"
-
-        fun parseBasic(request: HttpServletRequest): HttpRequestCommand {
-            val requestHeaders = request.readHeaders()
-            return HttpRequestCommand(
-                sourceType = request.javaClass,
-                url = request.requestURL.toString(),
-                query = request.queryString,
-                method = request.method,
-                headers = requestHeaders,
-            )
-        }
 
         private val logger = LoggerFactory.getLogger(HttpRequestCommand::class.java)
     }

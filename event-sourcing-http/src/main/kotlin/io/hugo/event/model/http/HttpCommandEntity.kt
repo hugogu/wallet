@@ -1,10 +1,9 @@
-package io.hugo.event.mvc
+package io.hugo.event.model.http
 
 import io.hugo.event.blocking.model.CommandEntity
 import java.time.Instant
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
-import javax.servlet.http.HttpServletRequest
 
 @Entity
 @DiscriminatorValue("HTTP_REQUEST")
@@ -14,8 +13,7 @@ class HttpCommandEntity : CommandEntity<HttpRequestCommand>() {
     }
 
     companion object {
-        fun createFrom(request: HttpServletRequest): HttpCommandEntity {
-            val command = HttpRequestCommand.parseBasic(request)
+        fun createFrom(command: HttpRequestCommand): HttpCommandEntity {
             val entity = HttpCommandEntity()
             entity.new = true
             entity.setId(command.id)

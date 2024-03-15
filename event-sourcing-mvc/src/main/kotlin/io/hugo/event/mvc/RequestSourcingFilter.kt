@@ -1,7 +1,10 @@
 package io.hugo.event.mvc
 
+import io.hugo.common.mvc.HttpServletRequestUtils.readHeaders
 import io.hugo.event.blocking.dal.CommandRepo
 import io.hugo.event.model.EventSourcingContext
+import io.hugo.event.model.http.HttpCommandEntity
+import io.hugo.event.model.http.HttpRequestCommand
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
@@ -47,6 +50,20 @@ open class RequestSourcingFilter : OncePerRequestFilter() {
         }
     }
 
-    protected open fun buildCommandEntity(request: HttpServletRequest) =
-        HttpCommandEntity.createFrom(request)
+    protected open fun buildCommandEntity(request: HttpServletRequest) = createFrom(request)
+
+    private fun parseBasic(request: HttpServletRequest): HttpRequestCommand {
+        val requestHeaders = request.readHeaders()
+        return HttpRequestCommand(
+            sourceType = request.javaClass,
+            url = request.requestURL.toString(),
+            query = request.queryString,
+            method = request.method,
+            headers = requestHeaders,
+        )
+    }
+
+    private fun createFrom(request: HttpServletRequest): HttpCommandEntity {
+        return HttpCommandEntity.createFrom(parseBasic(request))
+    }
 }
