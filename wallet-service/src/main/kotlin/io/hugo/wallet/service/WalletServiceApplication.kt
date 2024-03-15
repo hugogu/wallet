@@ -1,5 +1,6 @@
 package io.hugo.wallet.service
 
+import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -7,5 +8,7 @@ import org.springframework.boot.runApplication
 class WalletServiceApplication
 
 fun main(args: Array<String>) {
-    runApplication<WalletServiceApplication>(*args)
+    runApplication<WalletServiceApplication>(*args) {
+        webApplicationType = WebApplicationType.REACTIVE
+    }
 }

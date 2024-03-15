@@ -7,8 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.context.request.ServletWebRequest
+import org.springframework.web.server.ServerWebExchange
 
+/**
+ * Captures incoming HTTP callbacks and forwards them to Kafka for further processing.
+ * This is a simplified implementation of [Kafka REST proxy](https://github.com/confluentinc/kafka-rest).
+ */
 @RestController
 class CallbackController(
     private val eventPublisher: ApplicationEventPublisher
@@ -17,9 +21,9 @@ class CallbackController(
     fun onCallback(
         @RequestBody body: String,
         @RequestHeader headers: Map<String, String>,
-        request: ServletWebRequest,
+        exchange: ServerWebExchange,
     ) {
-        val message = HttpSourcedMessage(headers, request.toString(), body)
+        val message = HttpSourcedMessage(headers, exchange.request.uri.toString(), body)
         eventPublisher.publishEvent(message)
         logger.info("Captured callback message $message")
     }
