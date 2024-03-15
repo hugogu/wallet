@@ -6,22 +6,22 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.event.EventListener
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Sinks
 import java.util.function.Supplier
 
 @Configuration
 @Import(KafkaAutoConfiguration::class)
 class KafkaConfig {
-    private val httpMessages: BlockingQueue<HttpSourcedMessage> = LinkedBlockingQueue()
+    private val sink: Sinks.Many<HttpSourcedMessage> = Sinks.many().multicast().onBackpressureBuffer()
 
     @EventListener
     fun callbackEventListener(message: HttpSourcedMessage) {
-        httpMessages.add(message)
+        sink.tryEmitNext(message)
     }
 
     @Bean
-    fun httpMessageSupplier(): Supplier<HttpSourcedMessage> = Supplier {
-        httpMessages.take()
+    fun httpMessageSupplier(): Supplier<Flux<HttpSourcedMessage>> = Supplier {
+        sink.asFlux()
     }
 }
