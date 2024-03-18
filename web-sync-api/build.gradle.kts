@@ -9,6 +9,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.cloud:spring-cloud-stream")
+    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.vladmihalcea:hibernate-types-52:2.16.2")

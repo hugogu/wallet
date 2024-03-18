@@ -8,6 +8,30 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+  cloud:
+    stream:
+      bindings:
+        balanceActivitySupplier-out-0:
+          destination: BalanceActivity
+          content-type: application/json
+          producer:
+            # This is to make output message as JSON, otherwise it will be byte[]
+            use-native-encoding: true
+            partition-key-expression: payload.accountId.toString()
+      function:
+        definition: balanceActivitySupplier
+
+      kafka:
+        binder:
+          brokers: ${spring.kafka.bootstrap-servers}
+          auto-create-topics: true
+          producer-properties:
+            interceptor.classes: io.hugo.event.kafka.EventSourcingProducerInterceptor
+          configuration:
+            BalanceActivity:
+              replication-factor: 1
+              partitions: 1
+
 management:
   endpoints:
     web:
