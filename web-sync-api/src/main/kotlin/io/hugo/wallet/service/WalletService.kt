@@ -15,8 +15,8 @@ class WalletService(
 ) {
     @Transactional
     fun transfer(id: UUID, from: UUID, to: UUID, monetary: MonetaryAmount): TransactionEntity {
-        val fromAccount = accountRepo.getReferenceById(from)
-        val toAccount = accountRepo.getReferenceById(to)
+        val fromAccount = accountRepo.getWithLockById(from)
+        val toAccount = accountRepo.getWithLockById(to)
         val transaction = fromAccount.transferTo(toAccount, monetary).also {
             it.setId(id)
         }
