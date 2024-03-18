@@ -44,6 +44,7 @@ class AccountEntity : EntityBase() {
             it.toAccount = requireNotNull(another.id)
             it.transactionTime = Instant.now()
             it.settleTime  = Instant.now()
+            it.new = true
         }
     }
 }

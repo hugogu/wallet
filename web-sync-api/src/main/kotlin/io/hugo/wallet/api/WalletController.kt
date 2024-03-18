@@ -2,8 +2,8 @@ package io.hugo.wallet.api
 
 import io.hugo.wallet.api.model.*
 import io.hugo.wallet.dal.AccountSyncRepo
-import io.hugo.wallet.dal.TransactionSyncRepo
 import io.hugo.wallet.model.AccountEntity
+import io.hugo.wallet.service.WalletService
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,7 +18,7 @@ import java.util.UUID
 @RestController("/wallet")
 class WalletController(
     private val accountRepo: AccountSyncRepo,
-    private val transactionRepo: TransactionSyncRepo,
+    private val walletService: WalletService,
 ) {
     @PostMapping("/account")
     @Transactional
@@ -37,19 +37,11 @@ class WalletController(
     }
 
     @PostMapping("/transfer")
-    @Transactional
     fun transferSync(
         @RequestBody request: TransferRequest,
         @RequestHeader("X-Request-ID", required = false) requestId: UUID? = null,
     ) : ResourceIdentity {
-        val from = accountRepo.getReferenceById(request.from)
-        val to = accountRepo.getReferenceById(request.to)
-        val transaction = from.transferTo(to, request.monetary).also {
-            it.setId(requestId ?: UUID.randomUUID())
-            it.new = true
-        }
-
-        transactionRepo.save(transaction)
+        val transaction = walletService.transfer(requestId ?: UUID.randomUUID(), request.from, request.to, request.monetary)
 
         return ResourceIdentity(transaction.id!!, ResourceType.TRANSACTION)
     }
