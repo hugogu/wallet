@@ -3,15 +3,21 @@
 
 确认本地Docker已经安装并启动。
 
-1. Build Image
+1. Setup Temporal
+   ```shell
+   brew install temporal
+   temporal server start-dev
+   ```
+
+2. Build Image
     ```shell
     ./gradlew :web-api:bootBuildImage
     ```
-2. Run
+3. Run
     ```shell
     docker-compose up -d
     ```
-3. Benchmark
+4. Benchmark
     ```shell
     docker run --network="host" -i loadimpact/k6 run --out influxdb=http://localhost:8086/k6  - < ./benchmark/k6-scripts/max-vu.js
    docker run --network="host" -i wallet-k6 run -o xk6-influxdb -e K6_INFLUXDB_ORGANIZATION='hugo' -e K6_INFLUXDB_BUCKET='k6' -e K6_INFLUXDB_TOKEN='secret_token' - < ./benchmark/k6-scripts/max-vu.js

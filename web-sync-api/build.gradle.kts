@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":event-sourcing"))
     implementation(project(":event-sourcing-mvc"))
     implementation(project(":event-sourcing-kafka"))
+    implementation("io.temporal:temporal-kotlin")
+    implementation("io.temporal:temporal-sdk")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")

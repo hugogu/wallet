@@ -1,26 +1,23 @@
 package io.hugo.wallet.service
 
-import io.hugo.wallet.dal.AccountSyncRepo
-import io.hugo.wallet.dal.TransactionSyncRepo
 import io.hugo.wallet.model.TransactionEntity
+import io.hugo.wallet.workflow.WalletWorkflow
+import io.temporal.client.WorkflowClient
+import io.temporal.client.WorkflowOptions
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import javax.money.MonetaryAmount
 
 @Service
 class WalletService(
-    private val accountRepo: AccountSyncRepo,
-    private val transactionRepo: TransactionSyncRepo,
+    private val client: WorkflowClient,
+    private val options: WorkflowOptions,
 ) {
-    @Transactional
     fun transfer(id: UUID, from: UUID, to: UUID, monetary: MonetaryAmount): TransactionEntity {
-        val fromAccount = accountRepo.getWithLockById(from)
-        val toAccount = accountRepo.getWithLockById(to)
-        val transaction = fromAccount.transferTo(toAccount, monetary).also {
-            it.setId(id)
-        }
+        val workflow = client.newWorkflowStub(WalletWorkflow::class.java, options)
+        val result = WorkflowClient.execute(workflow::transfer, id, from, to, monetary)
+        // TODO: return the result prior to the completion of the workflow
 
-        return transactionRepo.save(transaction)
+        return result.get()
     }
 }
