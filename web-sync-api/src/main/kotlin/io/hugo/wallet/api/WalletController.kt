@@ -4,7 +4,6 @@ import io.hugo.wallet.api.model.*
 import io.hugo.wallet.dal.AccountSyncRepo
 import io.hugo.wallet.dal.TransactionSyncRepo
 import io.hugo.wallet.model.AccountEntity
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,7 +19,6 @@ import java.util.UUID
 class WalletController(
     private val accountRepo: AccountSyncRepo,
     private val transactionRepo: TransactionSyncRepo,
-    private val eventPublisher: ApplicationEventPublisher,
 ) {
     @PostMapping("/account")
     @Transactional
@@ -51,9 +49,6 @@ class WalletController(
             it.new = true
         }
 
-        transaction.getBalanceActivities().toList().forEach {
-            eventPublisher.publishEvent(it)
-        }
         transactionRepo.save(transaction)
 
         return ResourceIdentity(transaction.id!!, ResourceType.TRANSACTION)

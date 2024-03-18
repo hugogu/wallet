@@ -6,6 +6,7 @@ import io.hugo.wallet.model.event.AccountBalanceActivity
 import org.javamoney.moneta.FastMoney
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
+import org.springframework.data.domain.DomainEvents
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -40,8 +41,9 @@ class TransactionEntity : EntityBase() {
     fun getTransactionAmount(): MonetaryAmount = FastMoney.of(amount, currency)
 
     @JsonIgnore
-    fun getBalanceActivities(): Pair<AccountBalanceActivity, AccountBalanceActivity> {
-        return AccountBalanceActivity(id!!, fromAccount, getTransactionAmount().negate(), transactionTime) to
-            AccountBalanceActivity(id!!, toAccount, getTransactionAmount(), transactionTime)
+    @DomainEvents
+    fun getBalanceActivities(): Collection<AccountBalanceActivity> {
+         return listOf(AccountBalanceActivity(id!!, fromAccount, getTransactionAmount().negate(), transactionTime),
+            AccountBalanceActivity(id!!, toAccount, getTransactionAmount(), transactionTime))
     }
 }
