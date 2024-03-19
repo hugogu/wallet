@@ -1,6 +1,6 @@
 package io.hugo.wallet.service
 
-import io.hugo.wallet.model.TransactionEntity
+import io.hugo.wallet.model.TransactionSpec
 import io.hugo.wallet.workflow.WalletWorkflow
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowOptions
@@ -13,11 +13,11 @@ class WalletService(
     private val client: WorkflowClient,
     private val options: WorkflowOptions,
 ) {
-    fun transfer(id: UUID, from: UUID, to: UUID, monetary: MonetaryAmount): TransactionEntity {
+    fun transfer(id: UUID, from: UUID, to: UUID, monetary: MonetaryAmount): TransactionSpec {
         val workflow = client.newWorkflowStub(WalletWorkflow::class.java, options)
-        val result = WorkflowClient.execute(workflow::transfer, id, from, to, monetary)
-        // TODO: return the result prior to the completion of the workflow
+        val spec = TransactionSpec(id, from, to, monetary)
+        WorkflowClient.start(workflow::transfer, spec)
 
-        return result.get()
+        return spec
     }
 }

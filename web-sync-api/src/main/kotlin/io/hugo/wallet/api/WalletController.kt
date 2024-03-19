@@ -43,7 +43,7 @@ class WalletController(
     ) : ResourceIdentity {
         val transaction = walletService.transfer(requestId ?: UUID.randomUUID(), request.from, request.to, request.monetary)
 
-        return ResourceIdentity(transaction.id!!, ResourceType.TRANSACTION)
+        return ResourceIdentity(transaction.id, ResourceType.TRANSACTION)
     }
 
     companion object {
