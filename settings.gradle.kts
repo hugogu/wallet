@@ -12,5 +12,6 @@ include(":model")
 include(":wallet-service")
 include(":wallet-storage")
 include(":web-api")
+include(":sync-model")
 include(":web-sync-api")
 

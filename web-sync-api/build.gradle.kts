@@ -3,6 +3,7 @@ apply(plugin = "org.springframework.boot")
 dependencies {
     implementation(project(":common"))
     implementation(project(":model"))
+    implementation(project(":sync-model"))
     implementation(project(":event-sourcing"))
     implementation(project(":event-sourcing-mvc"))
     implementation(project(":event-sourcing-kafka"))
