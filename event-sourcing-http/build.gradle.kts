@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":common"))
+    implementation(project(":common-tools"))
     implementation(project(":event-sourcing"))
     implementation("javax.servlet:javax.servlet-api:3.1.0")
     implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")

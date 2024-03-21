@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.support.serializer.JsonSerializer
 
 @AutoConfiguration
 @ComponentScan("io.hugo.event.kafka.service")
@@ -45,5 +46,12 @@ class EventSourcingKafkaAutoConfiguration {
     @ConditionalOnMissingClass("io.r2dbc.spi.ConnectionFactory")
     @EntityScan(basePackages = ["io.hugo.event.kafka"])
     class EventSourcingSyncAutoConfiguration {
+    }
+
+    // This is to ensure the JsonSerializer shares the same ObjectMapper with the rest of the application.
+    // This only work for Spring-Kafka, not for Spring-Cloud-Stream Kafka Binder.
+    @Bean
+    fun defaultKafkaProducerFactoryCustomizer(objectMapper: ObjectMapper) = DefaultKafkaProducerFactoryCustomizer {
+        it.valueSerializer = JsonSerializer(objectMapper)
     }
 }

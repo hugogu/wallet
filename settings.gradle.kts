@@ -1,6 +1,7 @@
 rootProject.name = "Wallet"
 
 include(":common")
+include(":common-tools")
 include(":event-sourcing")
 include(":event-sourcing-http")
 include(":event-sourcing-mvc")

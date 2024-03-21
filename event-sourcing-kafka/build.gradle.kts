@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":common"))
+    implementation(project(":common-tools"))
     implementation(project(":event-sourcing"))
     implementation("org.apache.kafka:kafka-clients")
     implementation("org.springframework:spring-beans")

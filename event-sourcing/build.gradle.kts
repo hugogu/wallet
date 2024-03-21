@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":common"))
+    implementation(project(":common-tools"))
     implementation(project(":model"))
     implementation("javax.servlet:javax.servlet-api:3.1.0")
     implementation("org.springframework:spring-webmvc")

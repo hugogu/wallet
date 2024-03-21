@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier
 import org.zalando.jackson.datatype.money.MoneyModule
 
@@ -21,6 +22,7 @@ class SpringObjectMapperSupplier : ObjectMapperSupplier {
                     .withCurrencyFieldName("ccy")
                     .withFormattedFieldName("pretty")
             )
+            .registerModule(JavaTimeModule())
             .findAndRegisterModules()
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
