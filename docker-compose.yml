@@ -90,7 +90,8 @@ services:
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager        
+        jobmanager.rpc.address: jobmanager  
+        jobmanager.memory.jvm-metaspace.size: 312m
 
   taskmanager:
     image: flink:1.19.0-scala_2.12
@@ -103,7 +104,7 @@ services:
       - |
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 2 
+        taskmanager.numberOfTaskSlots: 2
 
   prometheus:
     image: prom/prometheus
