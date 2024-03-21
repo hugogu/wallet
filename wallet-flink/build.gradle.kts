@@ -6,7 +6,8 @@ dependencies {
     implementation("org.apache.flink:flink-clients:1.19.0")
     implementation("org.apache.flink:flink-connector-kafka:3.0.2-1.18")
     implementation("org.springframework.kafka:spring-kafka")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    runtimeOnly("org.yaml:snakeyaml")
 }
 
 // Conflicts with Flink's log4j2 dependency
