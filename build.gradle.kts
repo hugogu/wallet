@@ -4,8 +4,8 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "2.7.0" apply false
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.springframework.boot") version "2.7.18" apply false
+    id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
@@ -32,7 +32,7 @@ subprojects {
     the<DependencyManagementExtension>().apply {
         imports {
             mavenBom(SpringBootPlugin.BOM_COORDINATES)
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.3")
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.9")
             mavenBom("org.springframework.data:spring-data-bom:2021.2.0")
         }
     }
