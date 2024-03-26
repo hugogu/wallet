@@ -28,6 +28,7 @@ subprojects {
     group = "io.hugo"
     version = "0.0.1-SNAPSHOT"
     java.sourceCompatibility = JavaVersion.VERSION_11
+    java.targetCompatibility = JavaVersion.VERSION_11
 
     the<DependencyManagementExtension>().apply {
         imports {
