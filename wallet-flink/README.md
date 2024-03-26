@@ -1,5 +1,13 @@
 # Wallet Flink Job
 
+## How to build
+
+```shell
+gradle :wallet-flink:copyDependencies
+docker build -t flink-spring wallet-flink
+rm -rf wallet-flink/libs
+```
+
 
 ## References
 * [Apache Flink quickstart with Kotlin and Gradle](https://mgaiduk.substack.com/p/apache-flink-quickstart-with-kotlin)

@@ -15,17 +15,23 @@ configurations.implementation {
     exclude(group = "ch.qos.logback", module = "*")
 }
 
-tasks.jar {
-    isZip64 = true
-    manifest.attributes["Main-Class"] = "FraudDetection"
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    exclude("META-INF/*")
-    exclude("org/apache/flink/*")
-    exclude("org/scala-lang/*")
+/**
+ * Copy dependencies to be included in flink /opt/flink/lib directory.
+ * Not all libraries are appropriate for this, so we filter out some of them.
+ * For those already included in flink-dist, we can exclude them.
+ */
+tasks.register<Copy>("copyDependencies") {
+    from(configurations.runtimeClasspath.get().filter {
+        it.name.startsWith("jackson")
+                || it.name.startsWith("kotlin")
+                || it.name.startsWith("kafka")
+                || it.name.startsWith("spring")
+                || it.name.startsWith("snakeyaml")
+                || it.name.startsWith("jakarta")
+                || it.name.startsWith("zstd-jni")
+                || it.name.startsWith("money-api")
+                || it.name.startsWith("moneta")
+                || it.name.startsWith("hibernate")
+    })
+    into("libs")
 }
-
