@@ -1,3 +1,9 @@
+plugins {
+    application
+    // https://imperceptiblethoughts.com/shadow/introduction/
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
 dependencies {
     implementation(project(":common-tools"))
     implementation(project(":model"))
@@ -8,6 +14,11 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     runtimeOnly("org.yaml:snakeyaml")
+}
+
+application {
+    // Used by shadowJar job
+    mainClass.set("io.hugo.wallet.stream.FraudDetection")
 }
 
 // Conflicts with Flink's log4j2 dependency
@@ -34,4 +45,24 @@ tasks.register<Copy>("copyDependencies") {
                 || it.name.startsWith("hibernate")
     })
     into("libs")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+        attributes["Build-Jdk"] = System.getProperty("java.version")
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.shadowJar {
+    configurations = listOf(project.configurations.compileClasspath.get())
+    dependencies {
+        exclude {
+            // include all dependencies of in this workspace.
+            it.moduleGroup != "io.hugo" && it.moduleName != "model" && it.moduleName != "common-tools" &&
+                    // include those can't be placed into /opt/flink/lib due to bugs in these libs.
+                    it.moduleName != "flink-connector-kafka"
+        }
+    }
 }
