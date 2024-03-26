@@ -81,7 +81,7 @@ services:
       - local.env
 
   jobmanager:
-    image: flink:1.19.0-scala_2.12
+    image: flink-spring
     expose:
       - "6123"
     ports:
@@ -94,7 +94,7 @@ services:
         jobmanager.memory.jvm-metaspace.size: 312m
 
   taskmanager:
-    image: flink:1.19.0-scala_2.12
+    image: flink-spring
     depends_on:
       - jobmanager
     command: taskmanager
